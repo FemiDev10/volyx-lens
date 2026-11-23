@@ -35,7 +35,7 @@ test('shortcut fallbacks preserve Assist, Solve, Add screen, and emergency quit 
   assert.match(renderer, /else if \(action === 'task-context'\) await captureTaskContext\(\)/);
   assert.match(renderer, /if \(action === 'quit'\) \{ volyxLens\.quit\(\); return; \}/);
   assert.match(main, /id: 'assist',[^\n]*accelerator: 'CommandOrControl\+Return'/);
-  assert.match(main, /id: 'solve',[^\n]*accelerator: 'CommandOrControl\+H'/);
+  assert.match(main, /id: 'solve',[^\n]*accelerator: 'CommandOrControl\+S'/);
   assert.match(main, /id: 'task-context',[^\n]*accelerator: 'CommandOrControl\+Shift\+C'/);
   assert.match(main, /id: 'quit',[^\n]*accelerator: 'CommandOrControl\+Shift\+X'/);
 });

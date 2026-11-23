@@ -29,7 +29,7 @@ test('window metadata uses a neutral title in both main and renderer', () => {
 test('capture protection, global shortcuts, and Volyx Lens packaged identity remain intact', () => {
   assert.match(main, /VOLYX_LENS_NO_PROTECT/);
   assert.match(main, /accelerator: 'CommandOrControl\+Return'/);
-  assert.match(main, /accelerator: 'CommandOrControl\+H'/);
+  assert.match(main, /accelerator: 'CommandOrControl\+S'/);
   assert.match(main, /accelerator: 'CommandOrControl\+Shift\+X'/);
   assert.equal(pkg.build.productName, 'Volyx Lens');
   assert.equal(pkg.build.appId, 'ai.volyx.lens');

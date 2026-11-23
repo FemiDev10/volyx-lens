@@ -10,7 +10,7 @@ const registry = fs.readFileSync(path.join(root, 'src', 'shortcut-registry.js'),
 
 test('renderer maps every mac glyph shortcut to its Windows Ctrl label', () => {
   assert.match(renderer, /⌘↵': 'Ctrl\+Enter'/);
-  assert.match(renderer, /⌘H': 'Ctrl\+H'/);
+  assert.match(renderer, /⌘S': 'Ctrl\+S'/);
   assert.match(renderer, /⌘⇧C': 'Ctrl\+Shift\+C'/);
   assert.match(renderer, /⌘⇧X': 'Ctrl\+Shift\+X'/);
 });
