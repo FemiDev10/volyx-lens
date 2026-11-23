@@ -1388,9 +1388,9 @@ html[data-theme='light'] .history-cleaned-badge {
 #meeting-history-search:focus-visible,
 #meeting-history-export-format:focus-visible { outline: 2px solid var(--ov-blue-hi); outline-offset: 2px; }
 
-/* "…" menu: opens above the composer's bottom-left corner. */
+/* "…" menu: drops below the panel (above it when docked to the bottom). */
 #more-menu {
-  position: absolute; left: 18px; bottom: 58px; z-index: 30;
+  position: absolute; left: 18px; top: calc(100% + 6px); z-index: 30;
   min-width: 240px; padding: 6px;
   display: flex; flex-direction: column; gap: 2px;
   background: rgba(24, 24, 30, 0.96);
@@ -1400,6 +1400,7 @@ html[data-theme='light'] .history-cleaned-badge {
   animation: fadeUp 140ms ease both;
 }
 #more-menu.hidden { display: none; }
+#app[data-dock="bottom"] #more-menu { top: auto; bottom: calc(100% + 6px); }
 #more-menu .menu-item {
   display: flex; align-items: center; gap: 10px; width: 100%;
   min-height: 34px; padding: 6px 10px; border: none; border-radius: 8px;
@@ -1413,7 +1414,7 @@ html[data-theme='light'] .history-cleaned-badge {
 #more-menu .menu-item.danger { color: #FF8C99; }
 #more-menu .menu-item.danger .menu-ic { color: #FF8C99; }
 #more-menu .menu-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 10px; color: rgba(255,255,255,0.6); font-size: 12.5px; }
-#more-menu #assist-context { max-width: 160px; border-radius: 8px; border-color: var(--ov-border); background: rgba(255,255,255,0.06); color: #fff; font-size: 12px; padding: 5px 8px; }
+#more-menu #assist-context { max-width: none; min-width: 170px; border-radius: 8px; border-color: var(--ov-border); background: rgba(255,255,255,0.06); color: #fff; font-size: 12px; padding: 5px 8px; }
 #more-menu .menu-sep { height: 1px; margin: 4px 6px; background: rgba(255,255,255,0.10); }
 
 /* Small controls in the transcript, history and question bar: 28px minimum hit area. */
