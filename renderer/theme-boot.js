@@ -1,5 +1,5 @@
 (function bootstrapAccentTheme() {
-  var known = { indigo: true, sage: true, ember: true };
+  var known = { mono: true, indigo: true, sage: true, ember: true };
   var hasOwn = Object.prototype.hasOwnProperty;
   var hint = null;
   var reloaded = false;

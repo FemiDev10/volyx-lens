@@ -81,6 +81,26 @@ html, body {
   --accent-muted-soft: #ACB0CC;
 }
 
+:root[data-accent-theme="mono"] {
+  --accent: #D9D9DE;
+  --accent-hi: #EDEDF0;
+  --accent-soft: #F2F2F5;
+  --accent-fill: #3A3A40;
+  --accent-fill-hi: #46464D;
+  --accent-ink: #FFFFFF;
+  --accent-hair: rgba(255,255,255,0.16);
+  --accent-wash: rgba(255,255,255,0.08);
+  --accent-glow: rgba(0,0,0,0.35);
+  --accent-muted: #9A9AA2;
+  --accent-muted-fill: #2E2E33;
+  --accent-muted-hi: #B4B4BB;
+  --accent-muted-soft: #D4D4DA;
+  --surface-0: #0C0C0E;
+  --surface-1: #161619;
+  --tx-mut: #A8A8B0;
+  --field-border: #4A4A52;
+}
+
 :root[data-accent-theme="sage"] {
   --accent: #B3CEB7;
   --accent-hi: #C6DEC9;
@@ -142,6 +162,14 @@ body.window-inactive {
   --accent-soft: #ACB0CC;
   --accent-fill: #646E9E;
   --accent-fill-hi: #646E9E;
+}
+
+:root[data-accent-theme="mono"] body.window-inactive {
+  --accent: #A8A8B0;
+  --accent-hi: #B4B4BB;
+  --accent-soft: #D4D4DA;
+  --accent-fill: #2E2E33;
+  --accent-fill-hi: #2E2E33;
 }
 
 :root[data-accent-theme="sage"] body.window-inactive {
@@ -780,6 +808,7 @@ body:has(#onboard-scrim:not(.hidden)) #app {
 .s-theme-option strong { color: var(--tx-1); font-size: 12px; font-weight: 650; }
 .s-theme-option small { color: var(--tx-mut); font-size: 10.5px; }
 .s-theme-swatch { width: 26px; height: 26px; flex: 0 0 auto; border-radius: 50%; border: 1px solid rgba(255,255,255,0.22); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); }
+.s-theme-swatch[data-theme-swatch="mono"] { background: linear-gradient(135deg, #F2F2F5 50%, #111114 50%); }
 .s-theme-swatch[data-theme-swatch="indigo"] { background: var(--theme-indigo); }
 .s-theme-swatch[data-theme-swatch="sage"] { background: var(--theme-sage); }
 .s-theme-swatch[data-theme-swatch="ember"] { background: var(--theme-ember); }
@@ -1452,3 +1481,6 @@ html[data-theme='light'] .history-cleaned-badge {
 #session-context-save { border-color: transparent; background: var(--ov-blue); }
 #session-context-save:hover { background: var(--ov-blue-hi); }
 #session-context-set { margin-left: auto; padding: 1px 7px; border-radius: 999px; background: rgba(47,107,255,0.25); color: #DCE6FF; font-size: 11px; }
+
+/* Mono theme: near-opaque black glass so the desktop colour does not tint it. */
+:root[data-accent-theme="mono"] { --ov-bg: rgba(14, 14, 16, 0.94); --ov-border: rgba(255,255,255,0.12); }

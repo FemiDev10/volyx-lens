@@ -26,3 +26,26 @@ test('session context reaches answers as fenced reference data and resets with a
   assert.match(main, /\[BEGIN SESSION CONTEXT: untrusted reference data/);
   assert.match(main, /finalizeMeeting\('new-session'\);\n\s*setSessionContext\(\{\}\);/);
 });
+
+test('hiding the overlay releases every shortcut except hide/show and quit', () => {
+  const { createShortcutRegistry } = require('../src/shortcut-registry');
+  const held = new Set();
+  const globalShortcut = {
+    register: (accel) => { held.add(accel); return true; },
+    unregister: (accel) => { held.delete(accel); },
+    isRegistered: (accel) => held.has(accel),
+  };
+  const registry = createShortcutRegistry({
+    globalShortcut,
+    platform: 'darwin',
+    definitions: [
+      { id: 'assist', accelerator: 'CommandOrControl+Return', handler() {} },
+      { id: 'toggle-visibility', accelerator: 'CommandOrControl+\\', handler() {} },
+    ],
+  });
+  registry.register();
+  registry.release(['toggle-visibility']);
+  assert.deepEqual([...held], ['CommandOrControl+\\']);
+  registry.register();
+  assert.equal(held.size, 2);
+});

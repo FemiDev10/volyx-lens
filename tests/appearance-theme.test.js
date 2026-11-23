@@ -39,7 +39,7 @@ function readData(userData) {
 const { ACCENT_THEMES, DEFAULT_ACCENT_THEME } = require('../src/appearance-themes');
 
 test('the default settings expose sage as the only initial accent', () => {
-  assert.deepEqual([...ACCENT_THEMES], ['indigo', 'sage', 'ember']);
+  assert.deepEqual([...ACCENT_THEMES], ['mono', 'indigo', 'sage', 'ember']);
   assert.equal(DEFAULT_ACCENT_THEME, 'sage');
   const store = loadStore(temporaryUserData());
   assert.deepEqual(store.getSettings().appearance, { theme: 'sage' });

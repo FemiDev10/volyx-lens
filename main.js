@@ -3433,10 +3433,18 @@ function nudgeWindow(dx, dy) {
   windowDock = { ...windowDock, anchor: { x: x + (bounds.width / 2), y: y + (bounds.height / 2) } };
 }
 
+// While the overlay is hidden, every shortcut except hide/show and quit goes back
+// to the other apps, so ⌘↵ and ⌘+arrows work normally there again.
+const SHORTCUTS_KEPT_WHILE_HIDDEN = ['toggle-visibility', 'quit'];
 function toggleOverlayVisibility() {
   if (!win || win.isDestroyed()) return;
-  if (win.isVisible()) win.hide();
-  else win.showInactive();
+  if (win.isVisible()) {
+    win.hide();
+    shortcutRegistry.release(SHORTCUTS_KEPT_WHILE_HIDDEN);
+  } else {
+    win.showInactive();
+    shortcutRegistry.register();
+  }
 }
 
 const shortcutRegistry = createShortcutRegistry({

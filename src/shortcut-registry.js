@@ -91,11 +91,23 @@ function createShortcutRegistry({ globalShortcut, platform, definitions, onRegis
     return register();
   }
 
+  // Give keys back to other apps (e.g. while the overlay is hidden). Entries in
+  // keepIds stay registered; register() restores the rest.
+  function release(keepIds = []) {
+    const keep = new Set(keepIds);
+    for (const entry of entries) {
+      if (keep.has(entry.id) || attempts.get(entry.id) !== true) continue;
+      try { globalShortcut.unregister(currentAccelerator(entry)); } catch {}
+      attempts.set(entry.id, false);
+    }
+    return status();
+  }
+
   function getOverrides() {
     return Object.fromEntries(overrides);
   }
 
-  return Object.freeze({ register, status, remap, reset, getOverrides });
+  return Object.freeze({ register, release, status, remap, reset, getOverrides });
 }
 
 module.exports = { createShortcutRegistry };
