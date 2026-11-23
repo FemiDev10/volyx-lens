@@ -1,3 +1,5 @@
+> **This is [Femi Jimoh](https://github.com/FemiDev10)'s fork of [Volyx Lens](https://github.com/dk3yyyy/volyx-lens) by [dk3yyyy](https://github.com/dk3yyyy).** It adds a redesigned overlay, a Mono theme, a Home session window, per-session context and new shortcuts. See [FORK.md](FORK.md) for every change and how to build it. Everything below is the original project's README.
+
 <div align="center">
 
 <img src="renderer/assets/volyx-lens-logo.svg" width="112" alt="Volyx Lens sage aperture logo" />
