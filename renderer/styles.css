@@ -1233,6 +1233,7 @@ html[data-theme='light'] .history-cleaned-badge {
   #settings { background: #0C1122; }
   #onboard { background: #0C1122; }
   #meeting-history-panel { background: #101728; }
+  #more-menu { background: #18181E; -webkit-backdrop-filter: none; backdrop-filter: none; }
   #slide-review-dialog::backdrop,
   #meeting-recovery-dialog::backdrop {
     background: rgba(4,8,16,0.94);
@@ -1325,3 +1326,98 @@ html[data-theme='light'] .history-cleaned-badge {
 }
 .ai-retry:hover { background: rgba(113, 129, 196, 0.12); }
 .ai-retry:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
+
+/* ============================ Cluely-style overlay ============================ */
+/* Neutral dark glass, a three-control pill, one action row and a round blue send
+   button. Later rules override the earlier, accent-tinted look. */
+:root {
+  --ov-bg: rgba(18, 18, 22, 0.78);
+  --ov-border: rgba(255, 255, 255, 0.14);
+  --ov-hover: rgba(255, 255, 255, 0.08);
+  --ov-blue: #2F6BFF;
+  --ov-blue-hi: #4A80FF;
+}
+#toolbar {
+  gap: 6px; padding: 5px;
+  background: var(--ov-bg);
+  border-color: var(--ov-border);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+#toolbar button { width: 36px; height: 36px; border-radius: 50%; }
+#toolbar .tb-hide { width: auto; padding: 0 16px 0 12px; border-radius: var(--r-pill); background: rgba(255,255,255,0.07); font-size: 14px; }
+#toolbar .tb-hide:hover, #toolbar .tb-stop:hover:not(.active), #toolbar .tb-logo:hover { background: rgba(255,255,255,0.14) !important; }
+#toolbar .tb-stop { background: rgba(255,255,255,0.07); }
+#app[data-dock="left"] #toolbar .tb-hide, #app[data-dock="right"] #toolbar .tb-hide { width: 36px; padding: 0; }
+
+#panel-wrap,
+#app[data-dock="top"] #panel-wrap,
+#app[data-dock="bottom"] #panel-wrap { width: min(680px, calc(100vw - 20px)); }
+#panel.glass {
+  border-radius: 16px;
+  background: var(--ov-bg);
+  border-color: var(--ov-border);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+  padding: 16px 18px;
+}
+
+#action-row { flex-wrap: nowrap; gap: 2px; margin-top: 4px; }
+.act { font-size: 14px; color: rgba(255,255,255,0.88); padding: 6px 8px; min-height: 32px; }
+.act:hover:not(:disabled) { color: #fff; background: var(--ov-hover); }
+.act:hover:disabled { background: transparent; }
+.sep { color: rgba(255,255,255,0.28); }
+
+#composer { margin-top: 10px; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.10); border-radius: 12px; }
+#composer.focused { border-color: rgba(255,255,255,0.22); box-shadow: none; }
+.smart-pill { background: rgba(255,255,255,0.10); border-color: transparent; color: rgba(255,255,255,0.85); padding: 6px 12px; min-height: 30px; }
+.smart-pill:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
+.smart-pill.on { background: rgba(47,107,255,0.22); border-color: rgba(74,128,255,0.55); color: #DCE6FF; }
+.smart-pill.on .ic { color: #DCE6FF; }
+.more-btn { width: 30px; height: 30px; }
+.more-btn[aria-expanded="true"] { background: rgba(255,255,255,0.12); color: #fff; }
+#send-btn {
+  width: 34px; height: 34px;
+  background: linear-gradient(180deg, var(--ov-blue-hi), var(--ov-blue));
+  color: #fff; box-shadow: 0 2px 10px rgba(47,107,255,0.45);
+}
+#send-btn.busy { opacity: 0.5; cursor: default; }
+#send-btn.busy:hover { transform: none; filter: none; }
+#cancel-response { padding: 6px 12px; min-height: 30px; font-size: 12px; border-radius: var(--r-pill); }
+
+/* Restore keyboard focus rings the id rules used to remove. */
+#assist-context:focus-visible,
+#meeting-history-search:focus-visible,
+#meeting-history-export-format:focus-visible { outline: 2px solid var(--ov-blue-hi); outline-offset: 2px; }
+
+/* "…" menu: opens above the composer's bottom-left corner. */
+#more-menu {
+  position: absolute; left: 18px; bottom: 58px; z-index: 30;
+  min-width: 240px; padding: 6px;
+  display: flex; flex-direction: column; gap: 2px;
+  background: rgba(24, 24, 30, 0.96);
+  border: 1px solid var(--ov-border); border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+  -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px);
+  animation: fadeUp 140ms ease both;
+}
+#more-menu.hidden { display: none; }
+#more-menu .menu-item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  min-height: 34px; padding: 6px 10px; border: none; border-radius: 8px;
+  background: transparent; color: rgba(255,255,255,0.9);
+  font: 500 13.5px var(--font); text-align: left; cursor: pointer;
+}
+#more-menu .menu-item:hover, #more-menu .menu-item:focus-visible { background: var(--ov-hover); color: #fff; outline: none; }
+#more-menu .menu-item[aria-expanded="true"] { background: rgba(47,107,255,0.18); }
+#more-menu .menu-ic, #more-menu .ic { width: 16px; display: inline-flex; color: rgba(255,255,255,0.7); }
+#more-menu kbd { margin-left: auto; font: 500 11.5px var(--font); color: rgba(255,255,255,0.45); }
+#more-menu .menu-item.danger { color: #FF8C99; }
+#more-menu .menu-item.danger .menu-ic { color: #FF8C99; }
+#more-menu .menu-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 10px; color: rgba(255,255,255,0.6); font-size: 12.5px; }
+#more-menu #assist-context { max-width: 160px; border-radius: 8px; border-color: var(--ov-border); background: rgba(255,255,255,0.06); color: #fff; font-size: 12px; padding: 5px 8px; }
+#more-menu .menu-sep { height: 1px; margin: 4px 6px; background: rgba(255,255,255,0.10); }
+
+/* Small controls in the transcript, history and question bar: 28px minimum hit area. */
+.transcript-actions button, #meeting-history-panel button, #question-dismiss, .history-entry-delete { min-height: 28px; min-width: 28px; }
+@media (prefers-reduced-transparency: reduce) {
+  #toolbar, #panel.glass { background: #141418; }
+}

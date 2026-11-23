@@ -11,17 +11,10 @@
   <div id="app" data-dock="top">
     <!-- Edge-aware floating toolbar (drag handle) -->
     <div id="toolbar">
-      <div class="tb-grab" id="drag-handle" title="Drag to move Volyx Lens" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      <button class="tb-logo" id="logo-btn" title="Open the setup guide" aria-label="Open the setup guide"></button>
-      <div class="tb-divider"></div>
-      <button class="tb-hide" id="hide-btn"><span class="chev"></span><span>Hide</span></button>
-      <div class="tb-divider"></div>
-      <button class="tb-new" id="new-session-btn" title="Start a fresh conversation" aria-label="New Session" data-icon-only="true"><span class="new-icon" aria-hidden="true"></span></button>
-      <div class="tb-divider"></div>
-      <button class="tb-stop" id="stop-btn" title="Start Listening" aria-label="Start Listening" data-icon-only="true"><span class="listen-icon" aria-hidden="true"></span></button>
+      <button class="tb-logo" id="logo-btn" type="button" title="Open the setup guide" aria-label="Open the setup guide"></button>
+      <button class="tb-hide" id="hide-btn" type="button" aria-label="Hide panel" aria-expanded="true"><span class="chev"></span><span>Hide</span></button>
+      <button class="tb-stop" id="stop-btn" type="button" title="Start Listening" aria-label="Start Listening" data-icon-only="true"><span class="listen-icon" aria-hidden="true"></span></button>
       <span id="slide-tracking-toolbar-indicator" class="hidden" role="status" aria-label="Slide tracking active">Slides</span>
-      <div class="tb-divider"></div>
-      <button class="tb-kill" id="kill-btn" title="Stop all capture and quit Volyx Lens" aria-label="Stop all capture and quit Volyx Lens"></button>
     </div>
 
     <!-- Main assistant panel -->
@@ -173,32 +166,37 @@
 
         <div id="action-row">
           <button class="act assist-act" data-mode="assist" type="button"><span class="ic"></span><span class="assist-label">Assist</span><span class="assist-loader" aria-hidden="true"><i></i><i></i><i></i></span></button>
-          <select id="assist-context" title="Choose what Assist can use" aria-label="Assist context"><option value="both">Screen + conversation</option><option value="conversation">Conversation only</option><option value="screen">Screen only</option></select>
           <span class="sep">•</span>
           <button class="act" data-mode="say" type="button"><span class="ic"></span><span class="action-label">What should I say?</span><span class="assist-loader" aria-hidden="true"><i></i><i></i><i></i></span></button>
           <span class="sep">•</span>
           <button class="act" data-mode="followup" type="button"><span class="ic"></span><span class="action-label">Follow-up questions</span><span class="assist-loader" aria-hidden="true"><i></i><i></i><i></i></span></button>
           <span class="sep">•</span>
           <button class="act" data-mode="recap" type="button"><span class="ic"></span><span class="action-label">Recap</span><span class="assist-loader" aria-hidden="true"><i></i><i></i><i></i></span></button>
-          <span class="sep">•</span>
-          <button class="act" id="task-context-toggle" type="button" aria-expanded="false" aria-controls="task-context-panel"><span class="ic"></span><span>Task Context</span><span id="task-context-action-count" class="hidden">0</span></button>
-          <span class="sep">•</span>
-          <button class="act" id="meeting-history-toggle" type="button" aria-expanded="false" aria-controls="meeting-history-panel"><span class="ic"></span><span>History</span><span id="meeting-history-action-count" class="hidden">0</span></button>
         </div>
 
         <div id="composer">
           <div id="input-area">
-            <div id="placeholder">Ask anything · start with <strong>screen:</strong> to attach the current screen · <span class="keycap" id="composer-mod-key">⌘</span><span class="keycap" id="composer-enter-key">⏎</span> Assist</div>
-            <textarea id="input" rows="1" spellcheck="false" aria-label="Ask Volyx Lens"></textarea>
+            <div id="placeholder">Ask about your screen or conversation, or <span class="keycap" id="composer-mod-key">⌘</span><span class="keycap" id="composer-enter-key">⏎</span> for Assist</div>
+            <textarea id="input" rows="1" spellcheck="false" aria-label="Ask Volyx Lens" title="Tip: start with screen: to attach the current screen"></textarea>
           </div>
           <div id="composer-bottom">
-            <button id="smart-toggle" class="smart-pill"><span class="ic"></span><span>Smart</span></button>
-            <button id="more-btn" class="more-btn" title="Settings"></button>
+            <button id="smart-toggle" class="smart-pill" type="button" aria-pressed="false"><span class="ic"></span><span>Smart</span></button>
+            <button id="more-btn" class="more-btn" type="button" title="More" aria-label="More options" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu"></button>
             <div class="spacer"></div>
             <button id="cancel-response" class="hidden" type="button" title="Stop generating">Stop</button>
-            <button id="send-btn" title="Send"></button>
+            <button id="send-btn" type="button" title="Send" aria-label="Send"></button>
           </div>
         </div>
+      </div>
+
+      <div id="more-menu" class="hidden" role="menu" aria-label="More options">
+        <button id="new-session-btn" class="menu-item" role="menuitem" type="button" title="Start a fresh conversation" aria-label="New Session"><span class="menu-ic new-icon" aria-hidden="true"></span><span>New session</span></button>
+        <button id="task-context-toggle" class="act menu-item" role="menuitem" type="button" aria-expanded="false" aria-controls="task-context-panel"><span class="ic menu-ic"></span><span>Task Context</span><span id="task-context-action-count" class="hidden">0</span></button>
+        <button class="act menu-item" id="meeting-history-toggle" role="menuitem" type="button" aria-expanded="false" aria-controls="meeting-history-panel"><span class="ic menu-ic"></span><span>History</span><span id="meeting-history-action-count" class="hidden">0</span></button>
+        <label class="menu-field"><span>Assist uses</span><select id="assist-context" title="Choose what Assist can use" aria-label="Assist context"><option value="both">Screen + conversation</option><option value="conversation">Conversation only</option><option value="screen">Screen only</option></select></label>
+        <div class="menu-sep" role="separator"></div>
+        <button id="settings-btn" class="menu-item" role="menuitem" type="button"><span class="menu-ic" aria-hidden="true"></span><span>Settings</span><kbd>⌘,</kbd></button>
+        <button id="kill-btn" class="menu-item danger" role="menuitem" type="button" title="Stop all capture and quit Volyx Lens" aria-label="Stop all capture and quit Volyx Lens"><span class="menu-ic" aria-hidden="true"></span><span>Quit Volyx Lens</span><kbd>⌘⇧X</kbd></button>
       </div>
     </div>
   </div>

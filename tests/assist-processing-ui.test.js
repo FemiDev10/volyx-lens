@@ -24,7 +24,7 @@ test('all generated-answer actions expose an immediate compact processing indica
   assert.match(renderer, /button\.classList\.toggle\('processing', processing\)/);
   assert.match(renderer, /label\.textContent = processing \? 'Working' : ACTION_LABELS\[buttonMode\]/);
   assert.match(renderer, /document\.querySelectorAll\('\.act\[data-mode\]'\)[\s\S]*button\.disabled = value/);
-  assert.match(html, /id="task-context-toggle"[^>]*class="act"|class="act"[^>]*id="task-context-toggle"/);
+  assert.match(html, /id="task-context-toggle"[^>]*class="act[ "]/);
   assert.match(renderer, /setAttribute\('aria-busy', String\(processing\)\)/);
   assert.match(styles, /\.act\.processing \.assist-loader \{ display: inline-flex; \}/);
   assert.match(styles, /@keyframes assist-dot-pulse/);

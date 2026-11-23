@@ -22,17 +22,18 @@
   const brandLogo = (className = '') => `<img class="volyx-brand-logo ${className}" src="assets/volyx-lens-logo.svg" alt="">`;
   $('#logo-btn').innerHTML = brandLogo('toolbar-brand-logo');
   $('.tb-hide .chev').innerHTML = icon('chevron-down', { size: 14 });
-  $('#new-session-btn .new-icon').innerHTML = icon('refresh-cw', { size: 14 });
-  $('#kill-btn').innerHTML = icon('power', { size: 15 });
+  $('#new-session-btn .new-icon').innerHTML = icon('plus', { size: 15 });
+  $('#settings-btn .menu-ic').innerHTML = icon('settings', { size: 15 });
+  $('#kill-btn .menu-ic').innerHTML = icon('power', { size: 15 });
   document.querySelector('.act[data-mode="assist"] .ic').innerHTML = icon('sparkles', { size: 16 });
   document.querySelector('.act[data-mode="say"] .ic').innerHTML = icon('wand-sparkles', { size: 16 });
   document.querySelector('.act[data-mode="followup"] .ic').innerHTML = icon('message-circle', { size: 16 });
-  document.querySelector('.act[data-mode="recap"] .ic').innerHTML = icon('refresh-cw', { size: 16 });
+  document.querySelector('.act[data-mode="recap"] .ic').innerHTML = icon('rotate-ccw', { size: 16 });
   $('#task-context-toggle .ic').innerHTML = icon('camera', { size: 16 });
   $('#meeting-history-toggle .ic').innerHTML = icon('history', { size: 16 });
   $('#smart-toggle .ic').innerHTML = icon('zap', { size: 14 });
   $('#more-btn').innerHTML = icon('more-horizontal', { size: 18 });
-  $('#send-btn').innerHTML = icon('play', { size: 15 });
+  $('#send-btn').innerHTML = icon('arrow-up', { size: 16, stroke: 2.4 });
 
   // ---- state -------------------------------------------------------------
   let settings = null;
@@ -1488,6 +1489,7 @@ $('#meeting-notes-generate').addEventListener('click', async () => {
   smartBtn.addEventListener('click', async () => {
     settings.smart = !settings.smart;
     smartBtn.classList.toggle('on', settings.smart);
+    smartBtn.setAttribute('aria-pressed', String(!!settings.smart));
     updateSmartToggleModelIds();
     await volyxLens.settingsSet({ smart: settings.smart });
   });
@@ -2691,7 +2693,31 @@ $('#meeting-notes-generate').addEventListener('click', async () => {
       $('#s-status').focus();
     }
   }
-  $('#more-btn').addEventListener('click', openSettings);
+  // The "…" button opens a small menu; Settings, Quit and the panel toggles live there
+  // so the bar keeps only the four actions.
+  const moreMenu = $('#more-menu');
+  function setMoreMenuOpen(open) {
+    moreMenu.classList.toggle('hidden', !open);
+    $('#more-btn').setAttribute('aria-expanded', String(open));
+    if (open) {
+      const first = moreMenu.querySelector('.menu-item');
+      if (first) first.focus({ preventScroll: true });
+    }
+  }
+  $('#more-btn').addEventListener('click', (event) => {
+    event.stopPropagation();
+    setMoreMenuOpen(moreMenu.classList.contains('hidden'));
+  });
+  moreMenu.addEventListener('click', (event) => {
+    if (event.target.closest('.menu-item')) setMoreMenuOpen(false);
+  });
+  moreMenu.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') { event.preventDefault(); setMoreMenuOpen(false); $('#more-btn').focus(); }
+  });
+  document.addEventListener('click', (event) => {
+    if (!moreMenu.classList.contains('hidden') && !moreMenu.contains(event.target)) setMoreMenuOpen(false);
+  });
+  $('#settings-btn').addEventListener('click', openSettings);
   $('#s-close').addEventListener('click', closeSettings);
   scrim.addEventListener('click', (e) => { if (e.target === scrim) closeSettings(); });
   $('#shortcuts-retry').addEventListener('click', () => refreshShortcutStatus({ retry: true }));
@@ -3787,6 +3813,7 @@ $('#meeting-notes-generate').addEventListener('click', async () => {
     renderTaskContext(taskContext);
     loadMeetingHistory({ quiet: true });
     smartBtn.classList.toggle('on', !!settings.smart);
+    smartBtn.setAttribute('aria-pressed', String(!!settings.smart));
     updateSmartToggleModelIds();
     $('#assist-context').value = settings.assistContext || 'both';
     clearMessages();
