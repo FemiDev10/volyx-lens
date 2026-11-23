@@ -1422,3 +1422,17 @@ html[data-theme='light'] .history-cleaned-badge {
 @media (prefers-reduced-transparency: reduce) {
   #toolbar, #panel.glass { background: #141418; }
 }
+
+/* Session list: day headers, then title · duration chip · start time. */
+#meeting-history-list { max-height: 320px; gap: 2px; }
+.history-day { padding: 10px 8px 4px; color: rgba(255,255,255,0.5); font-size: 12px; font-weight: 600; }
+.history-day:first-child { padding-top: 2px; }
+.history-entry { border: 0; border-radius: 10px; background: transparent; padding: 2px 4px 2px 10px; }
+.history-entry:hover { background: rgba(255,255,255,0.06); }
+.history-entry-open { grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; min-height: 36px; }
+.history-entry-open strong { font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,0.92); }
+.history-entry-open .history-entry-meta { display: inline-flex; align-items: center; gap: 10px; overflow: visible; }
+.history-entry-open .history-duration { padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.88); font-size: 12px; font-variant-numeric: tabular-nums; }
+.history-entry-open .history-clock { min-width: 56px; text-align: right; color: rgba(255,255,255,0.6); font-size: 12px; }
+.history-entry-delete { opacity: 0; border: 0 !important; background: transparent !important; }
+.history-entry:hover .history-entry-delete, .history-entry-delete:focus-visible { opacity: 1; }

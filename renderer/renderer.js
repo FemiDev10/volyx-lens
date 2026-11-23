@@ -556,6 +556,34 @@
     notice.classList.remove('hidden');
   }
 
+  // Session-list labels: a day header ("Mon, Nov 16"), a title, a duration chip
+  // ("24:05") and the start time ("8:24am").
+  function historyDayLabel(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Earlier';
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+  function historyClock(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(' ', '').toLowerCase();
+  }
+  function historyDuration(record) {
+    const ms = Number(record.endedAt) - Number(record.startedAt);
+    if (!Number.isFinite(ms) || ms <= 0) return '0:00';
+    const total = Math.round(ms / 1000);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const sec = String(total % 60).padStart(2, '0');
+    return h ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`;
+  }
+  function historySessionTitle(record) {
+    const first = (text) => String(text || '').split(/\n|(?<=[.!?])\s/)[0].trim();
+    const title = first(record.title) || first(record.notesSummary) || (record.participant ? `Call with ${record.participant}` : '') || first(record.previewCleaned || record.preview);
+    const clipped = title.length > 70 ? `${title.slice(0, 69)}…` : title;
+    return clipped || `Session · ${meetingReasonLabel(record.reason)}`;
+  }
+
   function renderMeetingHistory() {
     const list = $('#meeting-history-list');
     const query = meetingHistorySearch.trim().toLowerCase();
@@ -583,7 +611,16 @@
       list.appendChild(empty);
       return;
     }
+    let lastDay = '';
     for (const record of records) {
+      const day = historyDayLabel(record.startedAt || record.endedAt);
+      if (day !== lastDay) {
+        const header = document.createElement('div');
+        header.className = 'history-day';
+        header.textContent = day;
+        list.appendChild(header);
+        lastDay = day;
+      }
       const row = document.createElement('div');
       row.className = 'history-entry';
       row.dataset.meetingId = record.id;
@@ -605,7 +642,7 @@
       open.type = 'button';
       open.className = 'history-entry-open';
       const when = document.createElement('strong');
-      when.textContent = meetingDateLabel(record.endedAt || record.startedAt);
+      when.textContent = historySessionTitle(record);
       if (record.meeting) {
         const badge = document.createElement('span');
         badge.className = 'history-meeting-badge';
@@ -625,9 +662,14 @@
         when.append(' ', cleanedBadge);
       }
       const meta = document.createElement('span');
-      const who = record.participant ? ` · ${record.participant}` : '';
-      const shown = record.previewCleaned || record.preview;
-      meta.textContent = `${record.turnCount} ${record.turnCount === 1 ? 'turn' : 'turns'}${who} · ${meetingReasonLabel(record.reason)}${shown ? ' · ' + shown : ''}`;
+      meta.className = 'history-entry-meta';
+      const duration = document.createElement('span');
+      duration.className = 'history-duration';
+      duration.textContent = historyDuration(record);
+      const clock = document.createElement('span');
+      clock.className = 'history-clock';
+      clock.textContent = historyClock(record.startedAt || record.endedAt);
+      meta.append(duration, clock);
       open.append(when, meta);
       const whoPrefix = record.participant ? `${record.participant}, ` : '';
       open.setAttribute('aria-label', `${meetingDateLabel(record.endedAt || record.startedAt)}, ${whoPrefix}${record.turnCount} ${record.turnCount === 1 ? 'turn' : 'turns'}, ${meetingReasonLabel(record.reason)}`);
