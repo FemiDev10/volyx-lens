@@ -1436,3 +1436,19 @@ html[data-theme='light'] .history-cleaned-badge {
 .history-entry-open .history-clock { min-width: 56px; text-align: right; color: rgba(255,255,255,0.6); font-size: 12px; }
 .history-entry-delete { opacity: 0; border: 0 !important; background: transparent !important; }
 .history-entry:hover .history-entry-delete, .history-entry-delete:focus-visible { opacity: 1; }
+
+/* Session context panel */
+#session-context-panel { display: grid; gap: 8px; margin-top: 10px; padding: 12px; border: 1px solid rgba(255,255,255,0.10); border-radius: 12px; background: rgba(255,255,255,0.03); }
+#session-context-panel.hidden { display: none; }
+.session-context-head { display: grid; gap: 2px; }
+.session-context-head strong { color: #fff; font-size: 13px; }
+.session-context-head span { color: rgba(255,255,255,0.55); font-size: 12px; }
+#session-context-title, #session-context-notes { width: 100%; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; background: rgba(0,0,0,0.2); color: var(--tx-1); font: 13px/1.45 var(--font); padding: 8px 10px; -webkit-user-select: text; user-select: text; }
+#session-context-notes { resize: vertical; min-height: 96px; max-height: 220px; }
+.session-context-actions { display: flex; align-items: center; gap: 8px; }
+#session-context-status { flex: 1; color: rgba(255,255,255,0.55); font-size: 12px; }
+.session-context-actions button { min-height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #fff; font: 500 12.5px var(--font); cursor: pointer; }
+.session-context-actions button:hover { background: rgba(255,255,255,0.12); }
+#session-context-save { border-color: transparent; background: var(--ov-blue); }
+#session-context-save:hover { background: var(--ov-blue-hi); }
+#session-context-set { margin-left: auto; padding: 1px 7px; border-radius: 999px; background: rgba(47,107,255,0.25); color: #DCE6FF; font-size: 11px; }

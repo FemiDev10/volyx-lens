@@ -72,6 +72,8 @@ test('finalize writes an atomic 0600 record and list/get round-trip it', () => {
   assert.deepEqual(store.list(), [{
     id: result.id,
     participant: null,
+    title: '',
+    hasSessionContext: false,
     reason: 'capture-stop',
     meeting: false,
     startedAt: 500,

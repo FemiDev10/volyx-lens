@@ -92,6 +92,13 @@
           </div>
         </div>
 
+        <div id="session-context-panel" class="hidden" aria-label="Session context">
+          <div class="session-context-head"><strong>Session context</strong><span>Used in answers for this session and saved with it in History.</span></div>
+          <input id="session-context-title" type="text" maxlength="120" autocomplete="off" placeholder="Session name, e.g. Product design interview" aria-label="Session name" />
+          <textarea id="session-context-notes" rows="5" maxlength="8000" spellcheck="true" placeholder="Paste the job description, who you're meeting, the agenda, or anything the answers should take into account." aria-label="Session notes"></textarea>
+          <div class="session-context-actions"><span id="session-context-status" role="status" aria-live="polite"></span><button id="session-context-clear" type="button">Clear</button><button id="session-context-save" type="button">Save</button></div>
+        </div>
+
         <div id="meeting-history-panel" class="hidden" aria-label="Meeting history">
           <div class="history-topline">
             <div class="history-title"><strong>History</strong><span id="meeting-history-count">0 meetings</span></div>
@@ -191,6 +198,7 @@
 
       <div id="more-menu" class="hidden" role="menu" aria-label="More options">
         <button id="new-session-btn" class="menu-item" role="menuitem" type="button" title="Start a fresh conversation" aria-label="New Session"><span class="menu-ic new-icon" aria-hidden="true"></span><span>New session</span></button>
+        <button id="session-context-toggle" class="menu-item" role="menuitem" type="button" aria-expanded="false" aria-controls="session-context-panel"><span class="menu-ic" aria-hidden="true"></span><span>Session context</span><span id="session-context-set" class="hidden">Set</span></button>
         <button id="task-context-toggle" class="act menu-item" role="menuitem" type="button" aria-expanded="false" aria-controls="task-context-panel"><span class="ic menu-ic"></span><span>Task Context</span><span id="task-context-action-count" class="hidden">0</span></button>
         <button class="act menu-item" id="meeting-history-toggle" role="menuitem" type="button" aria-expanded="false" aria-controls="meeting-history-panel"><span class="ic menu-ic"></span><span>History</span><span id="meeting-history-action-count" class="hidden">0</span></button>
         <label class="menu-field"><span>Assist uses</span><select id="assist-context" title="Choose what Assist can use" aria-label="Assist context"><option value="both">Screen + conversation</option><option value="conversation">Conversation only</option><option value="screen">Screen only</option></select></label>

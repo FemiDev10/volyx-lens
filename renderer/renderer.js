@@ -24,6 +24,7 @@
   $('.tb-hide .chev').innerHTML = icon('chevron-down', { size: 14 });
   $('#new-session-btn .new-icon').innerHTML = icon('plus', { size: 15 });
   $('#settings-btn .menu-ic').innerHTML = icon('settings', { size: 15 });
+  $('#session-context-toggle .menu-ic').innerHTML = icon('file-text', { size: 15 });
   $('#kill-btn .menu-ic').innerHTML = icon('power', { size: 15 });
   document.querySelector('.act[data-mode="assist"] .ic').innerHTML = icon('sparkles', { size: 16 });
   document.querySelector('.act[data-mode="say"] .ic').innerHTML = icon('wand-sparkles', { size: 16 });
@@ -1554,6 +1555,44 @@ $('#meeting-notes-generate').addEventListener('click', async () => {
     $('#hide-btn').setAttribute('aria-expanded', String(!collapsed));
     $('#live-dot').style.display = collapsed ? 'none' : '';
   });
+
+  // Session context: a name and notes for this session (the job, the interviewer,
+  // the agenda). The main process adds it to answers and saves it with the session.
+  function renderSessionContext(value = {}) {
+    const title = String(value.title || '');
+    const notes = String(value.notes || '');
+    $('#session-context-title').value = title;
+    $('#session-context-notes').value = notes;
+    $('#session-context-set').classList.toggle('hidden', !(title || notes));
+  }
+  function setSessionContextOpen(open) {
+    $('#session-context-panel').classList.toggle('hidden', !open);
+    $('#session-context-toggle').setAttribute('aria-expanded', String(open));
+    if (open) $('#session-context-title').focus({ preventScroll: true });
+  }
+  async function saveSessionContext(payload) {
+    try {
+      renderSessionContext(await volyxLens.sessionContextSet(payload));
+      $('#session-context-status').textContent = payload.title || payload.notes ? 'Saved. Answers will use it.' : 'Cleared.';
+    } catch (error) {
+      $('#session-context-status').textContent = error && error.message ? error.message : 'Session context could not be saved.';
+    }
+  }
+  $('#session-context-toggle').addEventListener('click', async () => {
+    const open = $('#session-context-panel').classList.contains('hidden');
+    if (open) {
+      $('#session-context-status').textContent = '';
+      try { renderSessionContext(await volyxLens.sessionContextGet()); } catch {}
+    }
+    setSessionContextOpen(open);
+  });
+  $('#session-context-save').addEventListener('click', () => saveSessionContext({
+    title: $('#session-context-title').value,
+    notes: $('#session-context-notes').value,
+  }));
+  $('#session-context-clear').addEventListener('click', () => saveSessionContext({ title: '', notes: '' }));
+  volyxLens.on('session-context:changed', (value) => renderSessionContext(value || {}));
+  volyxLens.sessionContextGet().then((value) => renderSessionContext(value || {})).catch(() => {});
 
   // Start a fresh context without stopping active microphone/system capture.
   $('#new-session-btn').addEventListener('click', () => { volyxLens.newSession(); });

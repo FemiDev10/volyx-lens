@@ -183,7 +183,16 @@ function createMeetingStore({ dir, fsImpl = fs, now = () => Date.now() } = {}) {
   // Stopping and starting Listening inside one meeting used to write a second
   // record, so each row held half the conversation and recap or notes worked on a
   // fragment (VR-08). `recordId` says which record the new turns belong to.
-  function appendToRecord(id, turns, { endedAt = null, meeting = false } = {}) {
+  // Title and context the user gave this session; kept short so a pasted document
+  // cannot bloat every history record.
+  function sessionFields({ title, sessionContext } = {}) {
+    const fields = {};
+    if (typeof title === 'string' && title.trim()) fields.title = title.trim().slice(0, 120);
+    if (typeof sessionContext === 'string' && sessionContext.trim()) fields.sessionContext = sessionContext.trim().slice(0, 8000);
+    return fields;
+  }
+
+  function appendToRecord(id, turns, { endedAt = null, meeting = false, title = '', sessionContext = '' } = {}) {
     if (!isSafeId(id)) return null;
     const target = recordPath(id);
     let existing = null;
@@ -207,12 +216,13 @@ function createMeetingStore({ dir, fsImpl = fs, now = () => Date.now() } = {}) {
       meeting: existing.meeting === true || meeting === true,
       turnCount: existing.turns.length + additions.length,
       turns: [...existing.turns, ...additions],
+      ...sessionFields({ title, sessionContext }),
     };
     writeRecord(target, merged, stat);
     return { saved: true, id, turnCount: merged.turnCount, pruned: 0, appended: true };
   }
 
-  function finalize({ turns = [], enabled = false, reason = 'capture-stop', meeting = false, startedAt = null, endedAt = null, recordId = null } = {}) {
+  function finalize({ turns = [], enabled = false, reason = 'capture-stop', meeting = false, startedAt = null, endedAt = null, recordId = null, title = '', sessionContext = '' } = {}) {
     if (!enabled) return { saved: false, reason: 'disabled' };
     const normalized = snapshotTurns(turns);
     if (!normalized.length) return { saved: false, reason: 'empty' };
@@ -222,7 +232,7 @@ function createMeetingStore({ dir, fsImpl = fs, now = () => Date.now() } = {}) {
     }
     if (recordId) {
       try {
-        const appended = appendToRecord(recordId, normalized, { endedAt, meeting });
+        const appended = appendToRecord(recordId, normalized, { endedAt, meeting, title, sessionContext });
         if (appended) {
           if (appended.saved) lastSavedFingerprint = fp;
           return appended;
@@ -251,6 +261,7 @@ function createMeetingStore({ dir, fsImpl = fs, now = () => Date.now() } = {}) {
       // A cleaned, readable copy of the same turns, written only when the user
       // asks for it. `turns` above always keeps the recognizer's wording.
       cleaned: null,
+      ...sessionFields({ title, sessionContext }),
     };
     const target = recordPath(id);
     const tmp = `${target}.tmp`;
@@ -331,6 +342,8 @@ function createMeetingStore({ dir, fsImpl = fs, now = () => Date.now() } = {}) {
         records.push({
           id,
           participant: record.participant || null,
+          title: typeof record.title === 'string' ? record.title.slice(0, 120) : '',
+          hasSessionContext: typeof record.sessionContext === 'string' && record.sessionContext.length > 0,
           reason: record.reason || null,
           meeting: record.meeting === true,
           startedAt: Number.isFinite(record.startedAt) ? record.startedAt : null,
