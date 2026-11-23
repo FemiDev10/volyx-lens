@@ -25,6 +25,7 @@
   $('#new-session-btn .new-icon').innerHTML = icon('plus', { size: 15 });
   $('#settings-btn .menu-ic').innerHTML = icon('settings', { size: 15 });
   $('#session-context-toggle .menu-ic').innerHTML = icon('file-text', { size: 15 });
+  $('#home-btn .menu-ic').innerHTML = icon('history', { size: 15 });
   $('#kill-btn .menu-ic').innerHTML = icon('power', { size: 15 });
   document.querySelector('.act[data-mode="assist"] .ic').innerHTML = icon('sparkles', { size: 16 });
   document.querySelector('.act[data-mode="say"] .ic').innerHTML = icon('wand-sparkles', { size: 16 });
@@ -2799,6 +2800,13 @@ $('#meeting-notes-generate').addEventListener('click', async () => {
     if (!moreMenu.classList.contains('hidden') && !moreMenu.contains(event.target)) setMoreMenuOpen(false);
   });
   $('#settings-btn').addEventListener('click', openSettings);
+  $('#home-btn').addEventListener('click', () => { volyxLens.openHome(); });
+  // Home asked to open a session: show History with that session's detail.
+  volyxLens.on('history:open-session', async ({ id } = {}) => {
+    if (typeof id !== 'string') return;
+    setMeetingHistoryOpen(true);
+    openMeetingDetail(id);
+  });
   $('#s-close').addEventListener('click', closeSettings);
   scrim.addEventListener('click', (e) => { if (e.target === scrim) closeSettings(); });
   $('#shortcuts-retry').addEventListener('click', () => refreshShortcutStatus({ retry: true }));

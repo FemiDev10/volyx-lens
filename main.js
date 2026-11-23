@@ -269,6 +269,53 @@ const transcriptionDiagnostics = {
 
 function send(channel, data) {
   if (win && !win.isDestroyed() && win.webContents && !win.webContents.isDestroyed()) win.webContents.send(channel, data);
+  if (HOME_EVENTS.has(channel)) sendHome(channel, data);
+}
+
+// -------- home window --------
+// A normal window listing saved sessions, with a Start button. It has its own
+// narrow preload and is trusted only for the home:* channels below.
+const HOME_EVENTS = new Set(['history:changed', 'capture:state']);
+const HOME_ENTRY_URL = pathToFileURL(path.join(__dirname, 'renderer', 'home.html')).href;
+let homeWin = null;
+
+function sendHome(channel, data) {
+  if (homeWin && !homeWin.isDestroyed() && !homeWin.webContents.isDestroyed()) homeWin.webContents.send('home:event', channel, data);
+}
+
+function openHomeWindow() {
+  if (homeWin && !homeWin.isDestroyed()) { homeWin.show(); homeWin.focus(); return; }
+  homeWin = new BrowserWindow({
+    width: 980,
+    height: 760,
+    minWidth: 560,
+    minHeight: 420,
+    title: 'Volyx Lens',
+    titleBarStyle: 'hiddenInset',
+    backgroundColor: '#0A0A0B',
+    show: false,
+    webPreferences: {
+      preload: path.join(__dirname, 'home-preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+    },
+  });
+  homeWin.setContentProtection(!process.env.VOLYX_LENS_NO_PROTECT);
+  homeWin.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  homeWin.webContents.on('will-navigate', (event, url) => { if (url !== HOME_ENTRY_URL) event.preventDefault(); });
+  homeWin.once('ready-to-show', () => { homeWin.show(); homeWin.focus(); });
+  homeWin.on('closed', () => { homeWin = null; });
+  homeWin.loadURL(HOME_ENTRY_URL);
+}
+
+function handleHome(channel, handler) {
+  ipcMain.handle(channel, (event, ...args) => {
+    const trusted = homeWin && !homeWin.isDestroyed() && event.sender === homeWin.webContents
+      && event.senderFrame === homeWin.webContents.mainFrame && event.senderFrame.url === HOME_ENTRY_URL;
+    if (!trusted) throw new Error('Untrusted IPC sender.');
+    return handler(...args);
+  });
 }
 
 let previousUpdateState = null;
@@ -2947,6 +2994,23 @@ handleTrusted('personal-context:import', (_e, kind) => importPersonalContextDocu
 handleTrusted('personal-context:remove', (_e, kind) => personalContextStore.removeDocument(String(kind || '')));
 handleTrusted('personal-context:set-enabled', (_e, kind, enabled) => personalContextStore.setEnabled(String(kind || ''), enabled === true));
 handleTrusted('capture:toggle', () => setCapturing(!desiredCapturing));
+handleTrusted('home:open', () => openHomeWindow());
+handleHome('home:list', () => meetingStore.list());
+handleHome('home:capture-state', () => state.capturing);
+handleHome('home:toggle-capture', async () => {
+  const turningOn = !desiredCapturing;
+  if (turningOn && win && !win.isDestroyed() && !win.isVisible()) { win.showInactive(); shortcutRegistry.register(); }
+  await setCapturing(turningOn);
+  return desiredCapturing;
+});
+handleHome('home:open-session', (id) => {
+  if (!win || win.isDestroyed() || typeof id !== 'string') return false;
+  if (!win.isVisible()) { win.showInactive(); shortcutRegistry.register(); }
+  if (windowDock.collapsed) applyDockBounds({ collapsed: false });
+  win.focus();
+  send('history:open-session', { id });
+  return true;
+});
 handleTrusted('capture:stop', () => setCapturing(false));
 handleTrusted('capture:state', () => ({ active: state.capturing, transitioning: state.capturing !== desiredCapturing }));
 onTrusted('capture:display-intent', (_e, active) => {
@@ -3525,6 +3589,7 @@ app.whenReady().then(() => {
   }, { useSystemPicker: false });
 
   createWindow();
+  if (!process.argv.includes('--smoke-test')) openHomeWindow();
   // Opening the sealed keys can raise a Keychain authorization prompt on a
   // build the OS has not seen before, so do it after the window exists instead
   // of holding up startup behind it.

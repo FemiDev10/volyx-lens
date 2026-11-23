@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('volyxLens', {
   captureState: () => ipcRenderer.invoke('capture:state'),
   setDisplayCaptureIntent: (active) => ipcRenderer.send('capture:display-intent', active === true),
   newSession: () => ipcRenderer.invoke('session:new'),
+  openHome: () => ipcRenderer.invoke('home:open'),
   sessionContextGet: () => ipcRenderer.invoke('session-context:get'),
   sessionContextSet: (payload) => ipcRenderer.invoke('session-context:set', payload),
   taskContextGet: () => ipcRenderer.invoke('task-context:get'),
@@ -98,7 +99,7 @@ contextBridge.exposeInMainWorld('volyxLens', {
   relaunch: () => ipcRenderer.send('app:relaunch'),
   log: (msg) => ipcRenderer.send('log', msg),
   on: (channel, cb) => {
-    const allowed = ['audio:level', 'capture:state', 'session:cleared', 'task-context:state', 'slide-tracking:state', 'transcript:cleared', 'transcript:update', 'transcript:remove', 'transcript:suppressed', 'question:detected', 'question:clear', 'llm:start', 'llm:provider', 'llm:token', 'llm:done', 'llm:error', 'llm:canceled', 'llm:confirm-task-context', 'status', 'transcript', 'transcript:partial', 'transcript:gap', 'transcription:state', 'update:state', 'update:open', 'deeplink:open', 'window:dock-state', 'history:changed', 'history:recap-token', 'history:clean-progress', 'meeting:detected', 'meeting:cleared', 'session-context:changed'];
+    const allowed = ['audio:level', 'capture:state', 'session:cleared', 'task-context:state', 'slide-tracking:state', 'transcript:cleared', 'transcript:update', 'transcript:remove', 'transcript:suppressed', 'question:detected', 'question:clear', 'llm:start', 'llm:provider', 'llm:token', 'llm:done', 'llm:error', 'llm:canceled', 'llm:confirm-task-context', 'status', 'transcript', 'transcript:partial', 'transcript:gap', 'transcription:state', 'update:state', 'update:open', 'deeplink:open', 'window:dock-state', 'history:changed', 'history:recap-token', 'history:clean-progress', 'meeting:detected', 'meeting:cleared', 'session-context:changed', 'history:open-session'];
     if (!allowed.includes(channel)) return;
     ipcRenderer.on(channel, (_e, data) => cb(data));
   }
