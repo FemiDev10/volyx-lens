@@ -3343,6 +3343,11 @@ const DEFAULT_SHORTCUT_DEFS = [
   { id: 'solve', accelerator: 'CommandOrControl+H', mac: '⌘H', other: 'Ctrl+H', feature: 'Solve screen', fallback: 'Use Solve button' },
   { id: 'task-context', accelerator: 'CommandOrControl+Shift+C', mac: '⌘⇧C', other: 'Ctrl+Shift+C', feature: 'Add screen', fallback: 'Use Add screen button' },
   { id: 'quit', accelerator: 'CommandOrControl+Shift+X', mac: '⌘⇧X', other: 'Ctrl+Shift+X', feature: 'Stop all and quit', fallback: 'Use power button' },
+  { id: 'toggle-visibility', accelerator: 'CommandOrControl+\\', mac: '⌘\\', other: 'Ctrl+\\', feature: 'Hide or show overlay', fallback: 'Use Hide button' },
+  { id: 'move-up', accelerator: 'CommandOrControl+Up', mac: '⌘↑', other: 'Ctrl+Up', feature: 'Move overlay up', fallback: 'Drag the bar' },
+  { id: 'move-down', accelerator: 'CommandOrControl+Down', mac: '⌘↓', other: 'Ctrl+Down', feature: 'Move overlay down', fallback: 'Drag the bar' },
+  { id: 'move-left', accelerator: 'CommandOrControl+Left', mac: '⌘←', other: 'Ctrl+Left', feature: 'Move overlay left', fallback: 'Drag the bar' },
+  { id: 'move-right', accelerator: 'CommandOrControl+Right', mac: '⌘→', other: 'Ctrl+Right', feature: 'Move overlay right', fallback: 'Drag the bar' },
 ];
 
 // -------- shortcuts --------
@@ -3368,7 +3373,38 @@ function shortcutDefinitions() {
     { ...solve, handler: whileUnblocked(() => runFeature('leetcode', '')) },
     { ...taskContext, handler: whileUnblocked(() => captureTaskContextScreen().catch((error) => send('status', { message: error && error.message ? error.message : 'Task context could not capture the screen.' }))) },
     { ...quit, handler: stopAllAndQuit },
+    { ...def('toggle-visibility'), handler: toggleOverlayVisibility },
+    { ...def('move-up'), handler: () => nudgeWindow(0, -1) },
+    { ...def('move-down'), handler: () => nudgeWindow(0, 1) },
+    { ...def('move-left'), handler: () => nudgeWindow(-1, 0) },
+    { ...def('move-right'), handler: () => nudgeWindow(1, 0) },
   ];
+}
+
+const def = (id) => DEFAULT_SHORTCUT_DEFS.find((d) => d.id === id);
+
+// Each press nudges the overlay one step, like dragging it a little. The window
+// stays where it lands; it only re-docks when the user drags it to an edge.
+const NUDGE_STEP = 60;
+function nudgeWindow(dx, dy) {
+  if (!win || win.isDestroyed()) return;
+  windowAutoFit?.cancel();
+  const bounds = win.getBounds();
+  const target = {
+    x: bounds.x + (bounds.width / 2) + (dx * NUDGE_STEP),
+    y: bounds.y + (bounds.height / 2) + (dy * NUDGE_STEP),
+  };
+  const { workArea } = screen.getDisplayNearestPoint({ x: Math.round(target.x), y: Math.round(target.y) });
+  const x = Math.min(Math.max(Math.round(target.x - (bounds.width / 2)), workArea.x), workArea.x + workArea.width - bounds.width);
+  const y = Math.min(Math.max(Math.round(target.y - (bounds.height / 2)), workArea.y), workArea.y + workArea.height - bounds.height);
+  win.setPosition(x, y, false);
+  windowDock = { ...windowDock, anchor: { x: x + (bounds.width / 2), y: y + (bounds.height / 2) } };
+}
+
+function toggleOverlayVisibility() {
+  if (!win || win.isDestroyed()) return;
+  if (win.isVisible()) win.hide();
+  else win.showInactive();
 }
 
 const shortcutRegistry = createShortcutRegistry({
